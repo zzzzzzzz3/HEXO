@@ -1,0 +1,355 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+  <title>ZhangRongHua</title>
+  <subtitle>灵感来源于生活</subtitle>
+  <link href="/atom.xml" rel="self"/>
+  
+  <link href="http://yoursite.com/"/>
+  <updated>2016-05-14T06:55:31.543Z</updated>
+  <id>http://yoursite.com/</id>
+  
+  <author>
+    <name>张荣划</name>
+    
+  </author>
+  
+  <generator uri="http://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>Good Night</title>
+    <link href="http://yoursite.com/2016/05/14/First/"/>
+    <id>http://yoursite.com/2016/05/14/First/</id>
+    <published>2016-05-14T06:55:31.543Z</published>
+    <updated>2016-05-14T06:55:31.543Z</updated>
+    
+    <content type="html">&lt;blockquote&gt;
+&lt;p&gt;hello whorld!&lt;/p&gt;
+&lt;/blockquote&gt;
+</content>
+    
+    <summary type="html">
+    
+      &lt;blockquote&gt;
+&lt;p&gt;hello whorld!&lt;/p&gt;
+&lt;/blockquote&gt;
+
+    
+    </summary>
+    
+    
+  </entry>
+  
+  <entry>
+    <title>php7_connect_mysql</title>
+    <link href="http://yoursite.com/2016/04/25/php7-connect-mysql/"/>
+    <id>http://yoursite.com/2016/04/25/php7-connect-mysql/</id>
+    <published>2016-04-25T15:53:12.000Z</published>
+    <updated>2016-06-14T10:02:33.565Z</updated>
+    
+    <content type="html">&lt;p&gt;使用php7连接mysql时：&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;$db_link = mysql_connect($db_hostname, $db_username, $db_password);
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;出现错误：&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;Fatal error: Uncaught Error: Call to undefined function mysql_connect() 
+&lt;/code&gt;&lt;/pre&gt;&lt;a id=&quot;more&quot;&gt;&lt;/a&gt;
+&lt;p&gt;查看&lt;a href=&quot;http://php.net/manual/zh/mysqlinfo.api.choosing.php&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;php官网针对MYSQL的扩展&lt;/a&gt;&lt;br&gt;错误的原因是由于php7将”mysql.dll”移除，所以到php根目录下修改配置文件php.ini：&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;extension_dir = &amp;quot;D:/Program/php7/ext&amp;quot;
+extension=php_curl.dll
+extension=php_gd2.dll
+extension=php_mbstring.dll 
+extension=php_mysqli.dll
+extension=php_pdo_mysql.dll
+extension=php_xmlrpc.dll
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;重启apache服务器。&lt;/p&gt;
+&lt;p&gt;使用mysqli的API连接数据库：&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;$db_link = mysqli_connect($db_hostname, $db_username, $db_password, $db_database);
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;案例：&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;&amp;lt;?php //mysqlcreate.php
+    $db_hostname = &amp;apos;localhost&amp;apos;;
+    $db_database = &amp;apos;phpdb&amp;apos;;
+    $db_username = &amp;apos;php&amp;apos;;
+    $db_password = &amp;apos;zhang3&amp;apos;;
+
+    $db_link = mysqli_connect($db_hostname, $db_username, $db_password, $db_database);
+    if($db_link) echo &amp;quot;success!&amp;quot;;
+    else echo &amp;quot;connect error&amp;quot;;
+
+    if(mysqli_connect_errno())echo &amp;quot;connect failed:&amp;quot; . mysqli_connect_error();
+
+    $usernames = array(
+        array(&amp;apos;thepresident&amp;apos;, &amp;apos;iamprez&amp;apos;, &amp;apos;Barack&amp;apos;, &amp;apos;Obama&amp;apos;),
+        array(&amp;apos;elizabeth&amp;apos;, &amp;apos;oneisqueen&amp;apos;, &amp;apos;Elizabeth&amp;apos;, &amp;apos;Windsor&amp;apos;),
+        array(&amp;apos;superrich&amp;apos;, &amp;apos;windoz&amp;apos;, &amp;apos;Bill&amp;apos;, &amp;apos;Gates&amp;apos;),
+        array(&amp;apos;genius&amp;apos;, &amp;apos;e=mc2&amp;apos;, &amp;apos;Albert&amp;apos;, &amp;apos;Einstein&amp;apos; )
+    );
+
+    $query = &amp;quot;CREATE TABLE IF NOT EXISTS users(username VARCHAR(16),
+            password CHAR(32),
+            forename VARCHAR(32),
+            surname VARCHAR(32),
+            UNIQUE INDEX(username(6)),
+            INDEX(forename(8)),
+            INDEX(surname(8)))&amp;quot;;
+
+    if(mysqli_query($db_link,$query) === true) echo &amp;quot;creat success&amp;quot;;
+    else echo &amp;quot;\ncreat error:&amp;quot; . mysqli_error($db_link);
+
+    for($i = 0; $i &amp;lt; 4; $i++){
+        $u = $usernames[$i][0];
+        $p = $usernames[$i][1];
+        $f = $usernames[$i][2];
+        $s = $usernames[$i][3];
+        $query = &amp;quot;INSERT INTO users VALUES(&amp;apos;$u&amp;apos;, &amp;apos;$p&amp;apos;, &amp;apos;$f&amp;apos;, &amp;apos;$s&amp;apos;)&amp;quot;;
+
+        mysqli_query($db_link,$query);
+
+    }
+
+    if($result = mysqli_query($db_link,&amp;quot;select * from users&amp;quot;)){
+        printf(&amp;quot;Select returned %d rows.\n&amp;quot;, mysqli_num_rows($result));
+        mysqli_free_result($result);
+    }
+
+
+    mysqli_close($db_link);
+?&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;</content>
+    
+    <summary type="html">
+    
+      &lt;p&gt;使用php7连接mysql时：&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;$db_link = mysql_connect($db_hostname, $db_username, $db_password);
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;出现错误：&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;Fatal error: Uncaught Error: Call to undefined function mysql_connect() 
+&lt;/code&gt;&lt;/pre&gt;
+    
+    </summary>
+    
+    
+      <category term="php7" scheme="http://yoursite.com/tags/php7/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>ajax_post</title>
+    <link href="http://yoursite.com/2016/04/25/ajax-post/"/>
+    <id>http://yoursite.com/2016/04/25/ajax-post/</id>
+    <published>2016-04-25T11:18:16.000Z</published>
+    <updated>2016-06-14T10:04:39.827Z</updated>
+    
+    <content type="html">&lt;p&gt;ajax post 请求的案例：&lt;/p&gt;
+&lt;a id=&quot;more&quot;&gt;&lt;/a&gt;
+&lt;pre&gt;&lt;code&gt;&amp;lt;html&amp;gt;
+    &amp;lt;head&amp;gt;
+        &amp;lt;title&amp;gt;
+        Fetch web page
+        &amp;lt;/title&amp;gt;
+    &amp;lt;/head&amp;gt;
+    &amp;lt;body&amp;gt;
+        &amp;lt;div id = &amp;apos;mydiv&amp;apos;&amp;gt;
+            The HTML will appear here
+        &amp;lt;/div&amp;gt;
+        &amp;lt;script&amp;gt;
+            //post方法需要三个参数（回调函数，PHP程序url，传递给PHP程序的信息）
+            PostAjaxRequest(insert, &amp;apos;fetchurl.php&amp;apos;, &amp;apos;u=pluginphp.com&amp;apos;)
+            //创建回调函数
+            function insert(){
+                //将获取到的html赋值给mydiv对象的内容
+                document.getElementById(&amp;apos;mydiv&amp;apos;).innerHTML = this
+            }
+            //编写post请求
+            function PostAjaxRequest(callback, url, args){
+                var contenttype = &amp;apos;application/x-www-form-urlencoded&amp;apos;
+                var ajax = new CreateAjaxObject(callback)
+                if(ajax == null) return false
+                //设置请求的类型 服务器文件的URL 是否异步处理
+                ajax.open(&amp;apos;POST&amp;apos;, url, true)
+                //设置HTTP头
+                ajax.setRequestHeader(&amp;apos;Content-type&amp;apos;, contenttype)
+                ajax.setRequestHeader(&amp;apos;Content-length&amp;apos;, args.length)
+                ajax.setRequestHeader(&amp;apos;Connection&amp;apos;, &amp;apos;close&amp;apos;)
+                //将请求发送给服务器
+                ajax.send(args)
+                return true
+            }
+            //创建ajax对象
+            function CreateAjaxObject(callback){
+                //尝试用三种方法分别创建ajax
+                //成功则返回ajax对象，否则返回false
+                try{
+                    var ajax = new XMLHttpRequest()
+                }
+                catch(e1){
+                    try{
+                        var ajax = new ActiveXObject(&amp;quot;Msxml2.XMLHTTP&amp;quot;)
+                    }
+                    catch(e2){
+                        try{
+                            var ajax = new ActiveXObject(&amp;quot;Microsoft.XMLHTTP&amp;quot;) 
+                        }
+                        catch(e3){
+                            ajax = false
+                        }
+                    }
+                }
+                //设置ajax的异步函数
+                if(ajax) ajax.onreadystatechange = function(){
+                    //一旦接受到服务器的响应，将立即设置传递来的回调函数，并调用
+                    if(this.readyState == 4 &amp;amp;&amp;amp; this.status == 200 &amp;amp;&amp;amp; this.responseText != null){
+                    callback.call(this.responseText)
+                    }
+                }
+                return ajax
+            }
+        &amp;lt;/script&amp;gt;
+    &amp;lt;/body&amp;gt;
+&amp;lt;/html&amp;gt; 
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;其中的fetchurl.php为：&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;&amp;lt;?php
+    echo file_get_contents(&amp;apos;http://&amp;apos; . $_POST[&amp;apos;u&amp;apos;]);
+?&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;这里有一篇ajax向服务器请求的&lt;a href=&quot;http://www.w3school.com.cn/ajax/ajax_xmlhttprequest_send.asp&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;博文&lt;/a&gt;讲的很详细&lt;/p&gt;
+</content>
+    
+    <summary type="html">
+    
+      &lt;p&gt;ajax post 请求的案例：&lt;/p&gt;
+    
+    </summary>
+    
+    
+      <category term="ajax" scheme="http://yoursite.com/tags/ajax/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>javascript_this</title>
+    <link href="http://yoursite.com/2016/04/25/javascript-this/"/>
+    <id>http://yoursite.com/2016/04/25/javascript-this/</id>
+    <published>2016-04-25T09:23:36.000Z</published>
+    <updated>2016-06-14T10:04:39.824Z</updated>
+    
+    <content type="html">&lt;ol&gt;
+&lt;li&gt;&lt;p&gt;方法调用模式&lt;br&gt;在一个对象的函数中，this表示该对象：&lt;/p&gt;
+&lt;p&gt; var A = {&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;name: &amp;apos;A_name&amp;apos;,
+getName: function(){
+    return this.name;
+}
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt; }&lt;br&gt; A.getName();//this=A&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+&lt;a id=&quot;more&quot;&gt;&lt;/a&gt;
+&lt;ol&gt;
+&lt;li&gt;&lt;p&gt;函数调用模式&lt;br&gt;当函数不是对象的函数时，函数中的this表示全局变量：&lt;/p&gt;
+&lt;p&gt; function f(){&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;this.name = &amp;apos;global&amp;apos;;
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt; }&lt;br&gt; f();//this=window&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;构造器调用模式&lt;br&gt;使用new调用的函数，其中的this指向的是被构造的对象：&lt;/p&gt;
+&lt;p&gt; function f(){&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;this.name = &amp;apos;className&amp;apos;;
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt; }&lt;br&gt; var ff = new f();//this = ff&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;使用apply或call调用模式&lt;br&gt;函数中的this会绑定到apply或call方法中的第一个参数：&lt;/p&gt;
+&lt;p&gt; function getName(name){&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;this.name = &amp;apos;className&amp;apos;;
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt; }&lt;br&gt; var f = {};&lt;br&gt; getName.call(f,name);//this = f&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+</content>
+    
+    <summary type="html">
+    
+      &lt;ol&gt;
+&lt;li&gt;&lt;p&gt;方法调用模式&lt;br&gt;在一个对象的函数中，this表示该对象：&lt;/p&gt;
+&lt;p&gt; var A = {&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;name: &amp;apos;A_name&amp;apos;,
+getName: function(){
+    return this.name;
+}
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt; }&lt;br&gt; A.getName();//this=A&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+    
+    </summary>
+    
+    
+      <category term="javascript" scheme="http://yoursite.com/tags/javascript/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>How to use Markdown</title>
+    <link href="http://yoursite.com/2016/04/24/How-to-use-Markdown/"/>
+    <id>http://yoursite.com/2016/04/24/How-to-use-Markdown/</id>
+    <published>2016-04-24T12:23:40.000Z</published>
+    <updated>2016-06-14T10:04:39.825Z</updated>
+    
+    <content type="html">&lt;p&gt;转载于：&lt;a href=&quot;http://www.ituring.com.cn/article/23&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;图灵社区&lt;/a&gt;&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;*斜体*
+**粗体**
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;&lt;em&gt;此处文字为斜体&lt;/em&gt;&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;此处文字为粗体&lt;/strong&gt;&lt;/p&gt;
+&lt;a id=&quot;more&quot;&gt;&lt;/a&gt;
+&lt;p&gt;行的开头空四格表示代码&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;此处是代码。
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;加前缀’&amp;gt;’表示引用文字内容&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;此处为引用的文字。&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;h1 id=&quot;加前缀’-’表示一级标题&quot;&gt;&lt;a href=&quot;#加前缀’-’表示一级标题&quot; class=&quot;headerlink&quot; title=&quot;加前缀’#’表示一级标题&quot;&gt;&lt;/a&gt;加前缀’#’表示一级标题&lt;/h1&gt;&lt;h2 id=&quot;‘-’表示二级标题&quot;&gt;&lt;a href=&quot;#‘-’表示二级标题&quot; class=&quot;headerlink&quot; title=&quot;‘##’表示二级标题&quot;&gt;&lt;/a&gt;‘##’表示二级标题&lt;/h2&gt;&lt;p&gt;以此类推。&lt;/p&gt;
+&lt;hr&gt;
+&lt;p&gt;‘—‘表示分割线 如上&lt;/p&gt;
+&lt;p&gt;加前缀’-‘表示无序列表，例如：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;无序列表&lt;/li&gt;
+&lt;li&gt;无序列表&lt;/li&gt;
+&lt;li&gt;无序列表&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;加前缀’1.’表示有序列表， 例如：&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;有序列表&lt;/li&gt;
+&lt;li&gt;有序列表&lt;/li&gt;
+&lt;li&gt;有序列表&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;嵌套列表用’-‘和’+’表示，’-‘表示外层，’+’表示内层，例如&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;外层&lt;ul&gt;
+&lt;li&gt;内层&lt;/li&gt;
+&lt;li&gt;内层 &lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;外层&lt;/li&gt;
+&lt;/ul&gt;
+&lt;pre&gt;&lt;code&gt;链接：[图灵社区](http://www.ituring.com.cn)
+
+图像：![这是一个Logo图像](http://www.turingbook.com/Content/img/Turing.Gif)
+
+此外，还可以以索引方式把url都列在文章的最后，例如这样：
+
+[图灵社区][1]
+![图灵社区Logo][2]
+
+[1]:http://www.ituring.com.cn
+[2]:http://www.ituring.com.cn/Content/img/Turing.Gif
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;&lt;a href=&quot;http://www.ituring.com.cn&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;图灵社区&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;http://www.turingbook.com/Content/img/Turing.Gif&quot; alt=&quot;这是一个Logo图像&quot;&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a href=&quot;http://www.ituring.com.cn&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;图灵社区&lt;/a&gt;&lt;br&gt;&lt;img src=&quot;http://www.ituring.com.cn/Content/img/Turing.Gif&quot; alt=&quot;图灵社区Logo&quot;&gt;&lt;/p&gt;
+</content>
+    
+    <summary type="html">
+    
+      &lt;p&gt;转载于：&lt;a href=&quot;http://www.ituring.com.cn/article/23&quot;&gt;图灵社区&lt;/a&gt;&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;*斜体*
+**粗体**
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;&lt;em&gt;此处文字为斜体&lt;/em&gt;&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;此处文字为粗体&lt;/strong&gt;&lt;/p&gt;
+    
+    </summary>
+    
+    
+      <category term="markdown" scheme="http://yoursite.com/tags/markdown/"/>
+    
+  </entry>
+  
+</feed>
